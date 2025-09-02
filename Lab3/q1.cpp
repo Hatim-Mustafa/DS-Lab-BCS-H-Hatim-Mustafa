@@ -7,48 +7,39 @@ struct Node {
 };
 
 bool isPalindrome (Node* head) {
-    Node* temp = head;
-    // Node* slow, fast;
-    // slow = head;
-    // fast = head;
-    // while (fast->next != null) {
-    //     slow = slow->next;
-    //     fast = fast->next;
-    //     fast = fast->next;
-    // }
-    int length = 0;
-    while (head->next != nullptr) {
-        length += 1;
-        head = head->next;
-    }
-    head = temp;
-    string s1;
-    string s2;
-    if (length%2 == 0) {
-        for (int i = 0; i < length/2; i++) {
-            s1 += head->value;
-            head = head->next;
-        }
-        for (int i = 0; i < length/2; i++) {
-            s2+= head->value;
-            head = head->next;
+    Node* slow;
+    Node* fast;
+    slow = head;
+    fast = head->next;
+    while (fast->next != nullptr) {
+        slow = slow->next;
+        fast = fast->next;
+        if (fast->next != nullptr) {
+            fast = fast->next;
         }
     }
-    else {
-        for (int i = 0; i < length/2; i++) {
-            s1 += head->value;
-            head = head->next;
-        }
-        head = head->next;
-        for (int i = 0; i < length/2; i++) {
-            s2+= head->value;
-            head = head->next;
+
+    Node* prev = nullptr;
+    Node* curr = slow->next;
+    Node* n = curr->next;
+
+    while(curr != nullptr) {
+        curr->next = prev;
+        prev = curr;
+        curr = n;
+        if (n != nullptr) {
+            n = n->next;
         }
     }
-    for (int i = 0; i < length/2; i++) {
-        if (s1[i] != s2[(length/2)-1-i]) {
+    
+    Node* second = prev;
+    
+    while (second != nullptr) {
+        if (second->value != head->value) {
             return false;
         }
+        head = head->next;
+        second = second->next;
     }
     return true;
 }
@@ -61,16 +52,15 @@ int main () {
     head = head->next;
     head->value = 'A';
     head->next = new Node();
-    // head = head->next;
-    // head->value = 'D';
-    // head->next = new Node();
+    head = head->next;
+    head->value = 'D';
+    head->next = new Node();
     head = head->next;
     head->value = 'A';
     head->next = new Node();
     head = head->next;
     head->value = 'M';
-    head->next = new Node();
-    head = head->next;
+    head->next = nullptr;
 
     if (isPalindrome(start)) {
         cout << "Yes\n";
