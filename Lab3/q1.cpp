@@ -68,4 +68,11 @@ int main () {
     else {
         cout << "No\n";
     }
+
+    Node* current = start;
+    while (current != nullptr) {
+        Node* temp = current;
+        current = current->next;
+        delete temp;
+    }
 }
