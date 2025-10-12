@@ -1,46 +1,43 @@
 #include <iostream>
+#include <string>
 using namespace std;
 
-void sort (int** arr, int n) {
-    int len = n*n;
-
-    for (int i = 0; i < len-1; i++) {
-        int index = i;
-        for (int j = i+1; j < len; j++) {
-            if (arr[j%n][j/n] < arr[index%n][index/n]) {
-                index = j;
+bool patternCheck (string s, string p, int indexs, int indexp, int total) {
+    if (indexs >= total && indexp >= p.length()) {return true;}
+    if (p[indexp] == s[indexs] || p[indexp] == '.' && indexs < total) {
+        if (p[indexp] == '.' && p[indexp+1] == '*') {
+            if (p[indexp+2] == s[indexs]) {
+                if (patternCheck(s,p,indexs+1,indexp+3,total)) {
+                    return true;
+                }
             }
         }
-        int temp = arr[i%n][i/n];
-        arr[i%n][i/n] = arr[index%n][index/n];
-        arr[index%n][index/n] = temp;
-    }
-}
-
-void printArray (int** arr, int n) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            cout << arr[i][j] << " ";
+        if (indexs == total-1) {
+            if (indexp == p.length()-1) {return true;}
+            if (p[indexp + 1] == '*' && indexp+1 == p.length()-1) {return true;}
         }
-        cout << endl;
+        if (p[indexp + 1] == '*') {
+            return patternCheck(s, p, indexs+1, indexp, total);
+        }
+        else {
+            return patternCheck(s, p, indexs+1, indexp+1, total);
+        }
+    }
+    else {
+        if (p[indexp+1] == '*') {
+            return patternCheck(s, p, indexs, indexp+2, total);
+        }
+        return false;
     }
 }
 
 int main () {
-    int n = 4;
-    int** arr = new int*[n];
-    int init[4][4] = {{2,3,2,8},{9,4,54,5},{1,7,4,11},{6,1,9,2}};
-    for (int i = 0; i < n; i++) {
-        arr[i] = new int[n];
-        for (int j = 0; j < n; j++) {
-            arr[i][j] = init[i][j];
-        }
+    string s = "aabab";
+    string p = "a.*ab";
+    if (patternCheck(s, p, 0, 0, s.length())) {
+        cout << "Does match\n";
     }
-    printArray(arr, 4);
-    sort(arr, 4);
-    cout << endl;
-    printArray(arr, 4);
-
-    for (int i = 0; i < n; i++) delete[] arr[i];
-    delete[] arr;
+    else {
+        cout << "Does not match\n";
+    }
 }
